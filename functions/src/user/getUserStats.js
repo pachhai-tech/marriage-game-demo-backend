@@ -18,12 +18,32 @@ module.exports = onCall(
         throw new Error('User is not authenticated')
       }
 
+      const userStats = {
+        marriageScoreTracker: 0
+      }
+      const appStats = {
+        marriageScoreTracker: 0
+      }
+
       const userRef = admin.firestore().collection('users')
       const userSnapshot = await userRef.get()
+      userSnapshot.forEach((doc) => {
+        const data = doc.data()
+
+        const uid = data.did.split(':')[4] // Extract uid from "did:ethr:<address>"
+
+        if (uid === decodedToken.uid) {
+          userStats.marriageScoreTracker += data.marriageScoreTracker || 0
+        }
+
+        appStats.marriageScoreTracker += data.marriageScoreTracker || 0
+      })
 
       return {
         success: true,
-        totalUsers: userSnapshot.size
+        totalUsers: userSnapshot.size,
+        userStats,
+        appStats
       }
     } catch (error) {
       logger.error('Error in getUserStats:', error)

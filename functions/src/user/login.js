@@ -73,13 +73,15 @@ module.exports = onCall(
           await userRef.update({
             ...userInfo,
             did: `did:pkh:eip155:${convertChainIdFromHex(CHAIN_ID)}:${uid}`,
-            loginCount: (userDoc.data().loginCount || 0) + 1
+            loginCount: (userDoc.data().loginCount || 0) + 1,
+            marriageScoreTracker: userDoc.data().marriageScoreTracker || 0
           })
         } else {
           await userRef.set({
             ...userInfo,
             did: `did:pkh:eip155:${convertChainIdFromHex(CHAIN_ID)}:${uid}`,
-            loginCount: 1
+            loginCount: 1,
+            marriageScoreTracker: 0
           })
         }
       }
